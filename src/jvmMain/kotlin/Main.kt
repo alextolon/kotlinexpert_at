@@ -14,13 +14,13 @@ import androidx.compose.ui.window.application
 @Composable
 @Preview
 fun App() {
-    var text by remember { mutableStateOf("Hello, World!") }
+    var text = remember { mutableStateOf("Hello, World!") }
 
     MaterialTheme {
         Button(onClick = {
-            text = "Hello, Desktop!"
+            text.value = "Hello, Desktop!"
         }) {
-            Text(text)
+            Text(text.value)
         }
     }
 }
