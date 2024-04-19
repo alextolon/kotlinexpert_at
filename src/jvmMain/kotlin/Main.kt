@@ -6,24 +6,30 @@ import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 
-fun buildMsg(txt: String): String = "Hello, $txt"
+class AppState {
+    val text = mutableStateOf("")
+    fun isButtonEnabled() = text.value.isNotEmpty()
+    /*
+    val buttonEnabled : Boolean
+        get() = text.value.isNotEmpty()
+        Modificando más adelante con enabled = appState.buttonEnabled
+    }
+     */
+}
+
 @Composable
 @Preview
-fun App() {
-    val text = remember { mutableStateOf("") }
-    val buttonEnabled = text.value.isNotEmpty()
+fun App(appState: AppState) {
     MaterialTheme {
         Column {
-            TextField(value = text.value, onValueChange = { newText -> text.value = newText })
-            Text(text = buildMsg(text.value))
-            Button(onClick = { text.value = "" }, enabled = buttonEnabled ) {
+            TextField(value = appState.text.value, onValueChange = { newText -> appState.text.value = newText })
+            Text(text = buildMessage(appState.text.value))
+            Button(onClick = { appState.text.value = "" }, enabled = appState.isButtonEnabled()) {
                 Text("Clean")
             }
         }
@@ -31,8 +37,15 @@ fun App() {
     }
 }
 
-fun main() = application {
-    Window(onCloseRequest = ::exitApplication) {
-        App()
+fun buildMessage(ms: String): String = "Hello $ms"
+
+fun main() {
+    //Antes de llamar a Compose
+    val apSt = AppState()
+    //Llamando a Compose
+    application {
+        Window(onCloseRequest = ::exitApplication) {
+            App(apSt)
+        }
     }
 }
