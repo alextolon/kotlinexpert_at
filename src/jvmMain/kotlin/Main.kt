@@ -7,6 +7,7 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Mic
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -14,14 +15,28 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
+import kotlin.concurrent.thread
 
 class AppState {
-    val notes = mutableStateOf(getNotes())
+    //Ahora el getNotes se hace en dos partes: primero emptyList
+    val notes = mutableStateOf(emptyList<Note>())
+    //loadNotes() envuelve a la función getNotes()
+    fun loadNotes() {
+        //Truco: para que el d
+        thread {
+            getNotes { notes.value = it }
+        }
+
+    }
 }
 
 @Composable
 @Preview
 fun App(appState: AppState) {
+
+    LaunchedEffect(true) {
+        appState.loadNotes()
+    }
     MaterialTheme {
         LazyColumn(
             modifier = Modifier.fillMaxWidth(),
